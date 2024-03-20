@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.17326702, g: 0.21657619, b: 0.29862118, a: 1}
+  m_IndirectSpecularColor: {r: 0.17276813, g: 0.21589187, b: 0.29782563, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -897,7 +897,7 @@ GameObject:
   - component: {fileID: 152965371}
   - component: {fileID: 152965370}
   - component: {fileID: 152965369}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Cube
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -5859,13 +5859,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1765264699}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.34420842, y: 0.5641432, z: -0.6021512, w: 0.44796982}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 11.35, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 81.037, y: 35.697, z: -75.932}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!114 &1765264702
 MonoBehaviour:
   m_ObjectHideFlags: 0

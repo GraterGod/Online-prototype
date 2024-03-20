@@ -9,14 +9,15 @@ using Photon.Pun;
 public class CharacterCompletController : MonoBehaviour
 {
     [Header("Movement")]
-    public float speed;
+    public float speed = 20;
+    public Rigidbody rb;
 
     [Tooltip("Dash Speed is 50")]
     public float DashingTime;
-
+    public float dashSpeed = 50;
+    
     private Vector2 move, mouseLook, joystickLook;
     private Vector3 rotationTarget;
-    float dashSpeed = 50;
 
     float DashTrigger;
     public bool isPC;
@@ -69,6 +70,7 @@ public class CharacterCompletController : MonoBehaviour
 
     void Start()
     {
+        rb = GetComponent<Rigidbody>();
         Instance = this;
         readyToThrow = true;
         view = GetComponent<PhotonView>();
@@ -320,13 +322,41 @@ public class CharacterCompletController : MonoBehaviour
     {
         BombBarer.SetActive(false);
     }
+
+    private void FixedUpdate()
+    {
+        if (!view.IsMine) return;
+
+            if (isPC)
+            {
+                RaycastHit hit;
+                Ray ray = Camera.main.ScreenPointToRay(mouseLook);
+
+                if (Physics.Raycast(ray, out hit))
+                {
+                    rotationTarget = hit.point;
+                }
+
+                movePlayerWithAim();
+            }
+
+            else
+            {
+                if (joystickLook.y == 0 && joystickLook.y == 0)
+                {
+                    movePlayer();
+                }
+                else
+                {
+                    movePlayerWithAim();
+                }
+            }
+    }
     // Update is called once per frame
     void Update()
     {
 
-
-        if (view.IsMine)
-        {
+        if (!view.IsMine) return;
 
             if (Input.GetKeyDown(KeyCode.F5))
             {
@@ -361,30 +391,6 @@ public class CharacterCompletController : MonoBehaviour
             if (isInHitpoint)
             {
                 loosingHead();
-            }
-
-            if (isPC)
-            {
-                RaycastHit hit;
-                Ray ray = Camera.main.ScreenPointToRay(mouseLook);
-
-                if (Physics.Raycast(ray, out hit))
-                {
-                    rotationTarget = hit.point;
-                }
-
-                movePlayerWithAim();
-            }
-            else
-            {
-                if (joystickLook.y == 0 && joystickLook.y == 0)
-                {
-                    movePlayer();
-                }
-                else
-                {
-                    movePlayerWithAim();
-                }
             }
 
             if (totalThrows != 0)
@@ -453,9 +459,6 @@ public class CharacterCompletController : MonoBehaviour
             }
 
 
-        }
-
-
     }
         public void movePlayer()
         {
@@ -467,7 +470,11 @@ public class CharacterCompletController : MonoBehaviour
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(movement), 0.15f);
             }
 
-            transform.Translate(movement * speed * Time.deltaTime, Space.World);
+        //transform.Translate(movement * speed * Time.deltaTime, Space.World);
+        //... let's use rigidbody.velocity instead
+
+            rb.velocity = movement * speed * Time.deltaTime + rb.velocity.y * Vector3.up;
+
         }
 
         public void movePlayerWithAim()
@@ -497,6 +504,6 @@ public class CharacterCompletController : MonoBehaviour
 
             Vector3 movement = new Vector3(move.x, 0f, move.y);
 
-            transform.Translate(movement * speed * Time.deltaTime, Space.World);
+            rb.velocity = movement * speed * Time.deltaTime + rb.velocity.y * Vector3.up;
         }
 }

@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Photon.Realtime;
 using Photon.Pun;
+using System.Collections;
+
 public class JumpScript : MonoBehaviour
 {
     public float jumpForce; // The force applied when jumping
@@ -10,18 +12,15 @@ public class JumpScript : MonoBehaviour
     private int jumpCount = 0; // Current jump count
     public InputActionReference jumpAction; // Reference to the jump Input Action
     private Rigidbody rb; // Reference to the Rigidbody component
-
     public bool Grounded;
     public Animator jumpAnim;
-
+    public LayerMask groundMask;
     PhotonView view;
-
 
     private void Start()
     {
         // Get the Rigidbody component
         rb = GetComponent<Rigidbody>();
-
         // Enable the Input Action
         jumpAction.action.Enable();
 
@@ -35,12 +34,15 @@ public class JumpScript : MonoBehaviour
         jumpAction.action.Disable();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        if (view.IsMine)
-        {
-            // Check if the jump button is pressed
-            if (jumpAction.action.triggered)
+        if (!view.IsMine) return;      
+
+        // Check if the jump button is pressed
+        // Apply custom gravity scale
+        //rb.AddForce(Physics.gravity * gravityScale, ForceMode.Acceleration);
+
+        if (jumpAction.action.triggered)
             {
                 Grounded = false;
                 jumpAnim.SetBool("Jump", true);
@@ -62,7 +64,6 @@ public class JumpScript : MonoBehaviour
                 jumpAnim.SetBool("DoubleJump", false);
 
             }
-        }
 
     }
 
@@ -73,25 +74,15 @@ public class JumpScript : MonoBehaviour
         {
             // Add vertical force to make the player jump
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-
             // Increment jump count
             jumpCount++;
-        }
-    }
-
-    private void FixedUpdate()
-    {
-        if (view.IsMine)
-        {
-            // Apply custom gravity scale
-            rb.AddForce(Physics.gravity * gravityScale, ForceMode.Acceleration);
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
         // Reset jump count when landing on the ground
-        if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("CantThrowGround"))
+        if (collision.transform.CompareTag("Ground"))
         {
             jumpCount = 0;
             Grounded = true;
@@ -101,7 +92,7 @@ public class JumpScript : MonoBehaviour
     private void OnCollisionExit(Collision collision)
     {
         // Reset jump count when landing on the ground
-        if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("CantThrowGround"))
+        if (collision.transform.CompareTag("Ground"))
         {
             Grounded = false;
         }
